@@ -181,16 +181,13 @@ static void usage()
     char* usage_name = DEFAULT_BIN_NAME;
     printf("usage: %s [ -d | -v | -c brks.ini | -l log.conf ]\n", usage_name);
     printf("-d: Run in the foreground\n");
-    printf("-c brks.ini: Specify a config file\n");
+    printf("-c brks.ini: Specify a parameter config file\n");
     printf("-l log.conf: Specify a log config file\n");
 }
 
 int main(int argc, char** argv)
 {
-    if (argc <= 1)
-    {
-        usage();
-    }
+    if (argc <= 1) usage();
 
     char ch;
     bool run_in_foreground = false;
@@ -317,11 +314,12 @@ int main(int argc, char** argv)
     if (processid == 0)
     {
         LOG_INFO("this is child process pid=%d", getpid());
-        if (!intf.start(server_socket))
+        if (!intf.add_server_socket(server_socket))
         {
             LOG_ERROR("cannot start child process!");
             exit(-1); // if cannot start child process donnot restart server.
         }
+        intf.run();
         LOG_ERROR("child process exit");
     }
 
@@ -329,4 +327,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
 
